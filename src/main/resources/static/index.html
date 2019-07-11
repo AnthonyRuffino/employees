@@ -21,10 +21,56 @@
       const API = "/api/employee/";
       function EmployeeController($scope) {
         $scope.employees = [];
+        $scope.employeeSelectedForAssignment = null;
+
+
+        $scope.isEmployeeSelectedForAssignment = (id) => {
+          return $scope.employeeSelectedForAssignment && id === $scope.employeeSelectedForAssignment.id;
+        }
+
+        $scope.selectEmployeeForAssignment = (employee) => {
+          $scope.employeeSelectedForAssignment = employee;
+        }
+
+        $scope.formatEmployee = (employee) => {
+          return employee && (employee.firstName + ' ' + employee.lastName + ' [ ID: ' + employee.id + ' ]');
+        }
+
+        $scope.deleteEmployee = (id) => {
+          fetch(API + id, {
+            method: 'delete'
+          }).then(() => $scope.loadEmployees());
+        }
+
+        $scope.unassignSupervisor = (id) => {
+          fetch(API + id, {
+            method: 'PATCH',
+            headers: new Headers({'content-type': 'application/json'}),
+            body: JSON.stringify( { supervisor: null } )
+          }).then(() => $scope.loadEmployees());
+        }
+
+        $scope.showAssignAsSupervisorButton = (employee) => {
+          return employee.position.supervisor
+            && $scope.employeeSelectedForAssignment
+            && $scope.employeeSelectedForAssignment.id !== employee.id;
+        }
+
+        $scope.assignAsSupervisor = (supervisorId) => {
+          fetch(API + $scope.employeeSelectedForAssignment.id, {
+            method: 'PATCH',
+            headers: new Headers({'content-type': 'application/json'}),
+            body: JSON.stringify( { supervisor: {id: supervisorId} } )
+          }).then(() => {
+            $scope.employeeSelectedForAssignment = null;
+          $scope.loadEmployees();
+        });
+        }
 
         $scope.loadEmployees = () => {
           fetch(API)
             .then(function(response) {
+              console.log(response);
               return response.json();
             })
             .then(function(data) {
@@ -40,7 +86,7 @@
 <body>
 <header>
     <div class="content-wrapper">
-        <img href="https://www.sandbox.game/images/favicon.png" />
+
         <br/>
         <div class="float-right">
             <div class="float-right">
@@ -51,7 +97,7 @@
 </header>
 
 <div id="body">
-
+    <p class="float-right" ng-click="loadEmployees()" type="submit"><button>Reload Users</button></p>
     <section class="content-wrapper main-content clear-fix">
 
         <section class="featured">
@@ -59,6 +105,7 @@
             <div class="content-wrapper">
                 <table>
                     <tr>
+                        <th></th>
                         <th>ID</th>
                         <th>First Name</th>
                         <th>Last Name</th>
@@ -68,27 +115,33 @@
                         <th>Delete</th>
                     </tr>
                     <tr ng-repeat="employee in employees">
+                        <td>
+                            <button ng-click="assignAsSupervisor(employee.id)" ng-show="showAssignAsSupervisorButton(employee)">
+                                <span style='color: green'>Assign as supervisor for {{formatEmployee(employeeSelectedForAssignment)}}</span>
+                            </button>
+                        </td>
                         <td>{{employee.id}}</td>
                         <td>{{employee.firstName}}</td>
                         <td>{{employee.lastName}}</td>
                         <td>{{employee.position.name}}</td>
                         <td>
-                            {{employee.supervisor && (employee.firstName + ' ' + employee.lastName + ' [ ID: ' + employee.id + ' ]')}}
+                            {{employee.supervisor && (formatEmployee(employee.supervisor))}}
+                            <br/>
+                            <button ng-click="unassignSupervisor(employee.id)" ng-show="employee.supervisor">Remove</button>
                         </td>
                         <td>
-                            <button>
+                            <button ng-click="selectEmployeeForAssignment(employee)" ng-show="!employee.supervisor && !isEmployeeSelectedForAssignment(employee.id)">
                                 <span style='color: green'>Assign Supervisor</span>
                             </button>
+                            <button ng-click="selectEmployeeForAssignment()" ng-show="!employee.supervisor && isEmployeeSelectedForAssignment(employee.id)">
+                                <span style='color: red'>Cancel</span>
+                            </button>
                         </td>
-                        <td>
-                            <button >Delete User</button>
-                        </td>
+                        <td><button ng-click="deleteEmployee(employee.id)">Delete User</button></td>
                     </tr>
                 </table>
             </div>
         </section>
-
-
     </section>
 </div>
 
