@@ -1,49 +1,49 @@
 package de.sandbox.employees.api;
 
 import de.sandbox.employees.model.Employee;
+import de.sandbox.employees.service.EmployeeService;
+import org.hibernate.cfg.NotYetImplementedException;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.List;
 
 @RequestMapping("/api/employee")
 @RestController
 public class EmployeeController {
 
-    private static Employee mockEmployee = new Employee();
-    static {
-        mockEmployee.setFirstName("fn");
-        mockEmployee.setLastName("ln");
+    private final EmployeeService employeeService;
+
+    public EmployeeController(EmployeeService employeeService) {
+        this.employeeService = employeeService;
     }
 
     @GetMapping("")
     public List<Employee> findAll() {
-        return Arrays.asList(mockEmployee);
+        return employeeService.findAll();
     }
 
     @GetMapping("/{id}")
     public Employee findEmployeeById(@PathVariable long id) {
-        return mockEmployee;
+        return employeeService.findEmployeeById(id);
     }
 
     @DeleteMapping("/{id}")
     public void deleteEmployeeById(@PathVariable long id) {
-
+        employeeService.deleteEmployeeById(id);
     }
 
     @GetMapping("/position/{positionId}")
     public List<Employee> findEmployeesByPositionId(@PathVariable long positionId) {
-        return Arrays.asList(mockEmployee);
+        return employeeService.findEmployeesByPositionId(positionId);
     }
 
     @PostMapping("")
     public Employee createEmployee(@RequestBody Employee employee) {
-        return mockEmployee;
+        return employeeService.createEmployee(employee);
     }
 
     @PatchMapping("/{id}")
     public Employee patchEmployee(@PathVariable long id, @RequestBody Employee employee) {
-        employee.setId(id);
-        return mockEmployee;
+        throw new NotYetImplementedException();
     }
 }
