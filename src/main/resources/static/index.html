@@ -20,6 +20,21 @@
 
       const API = "/api/employee/";
       function EmployeeController($scope) {
+
+        $scope.employeeInstance = () => {
+          return {
+            firstName: null,
+            lastName: null
+          };
+        };
+
+        $scope.canSupervise = false;
+
+        $scope.newUserSubmitError = null;
+
+        $scope.newEmployee = $scope.employeeInstance();
+
+
         $scope.employees = [];
         $scope.employeeSelectedForAssignment = null;
 
@@ -48,6 +63,35 @@
             headers: new Headers({'content-type': 'application/json'}),
             body: JSON.stringify( { supervisor: null } )
           }).then(() => $scope.loadEmployees());
+        }
+
+        $scope.createEmployee = () => {
+
+          if(!$scope.newEmployee.firstName) {
+            $scope.newUserSubmitError = 'First Name Required';
+            return;
+          }
+          if(!$scope.newEmployee.lastName) {
+            $scope.newUserSubmitError = 'Last Name Required';
+            return;
+          }
+
+          if($scope.canSupervise) {
+            $scope.newEmployee.position = { id: 1}
+          } else {
+            $scope.newEmployee.position = { id: 2}
+          }
+
+          fetch(API, {
+            method: 'POST',
+            headers: new Headers({'content-type': 'application/json'}),
+            body: JSON.stringify( $scope.newEmployee )
+          }).then(() => {
+            $scope.newEmployee = $scope.employeeInstance();
+            $scope.loadEmployees();
+            $scope.newUserSubmitError = null;
+            $scope.canSupervise = false;
+          });
         }
 
         $scope.employeeIsSubordinateToSelectedEmployee = (employee) => {
@@ -125,7 +169,7 @@
                                 <button ng-hide="employeeIsSubordinateToSelectedEmployee(employee)" ng-click="assignAsSupervisor(employee.id)" >
                                     <span style='color: green'>Assign as supervisor for {{formatEmployee(employeeSelectedForAssignment)}}</span>
                                 </button>
-                                <span ng-show="employeeIsSubordinateToSelectedEmployee(employee)" style='color: red'>Selected user is this user's supervisor</span>
+                                <span ng-show="employeeIsSubordinateToSelectedEmployee(employee)" style='color: red'>Selected employee is this employee's supervisor</span>
                             </div>
 
                         </td>
@@ -136,11 +180,11 @@
                         <td>
                             {{employee.supervisor && (formatEmployee(employee.supervisor))}}
                             <br/>
-                            <button ng-click="unassignSupervisor(employee.id)" ng-show="employee.supervisor">Remove</button>
+                            <button ng-click="unassignSupervisor(employee.id)" ng-show="employee.supervisor">Remove Supervisor</button>
                         </td>
                         <td>
                             <button ng-click="selectEmployeeForAssignment(employee)" ng-show="!employee.supervisor && !isEmployeeSelectedForAssignment(employee.id)">
-                                <span style='color: green'>Assign Supervisor</span>
+                                <span>Assign Supervisor</span>
                             </button>
                             <button ng-click="selectEmployeeForAssignment()" ng-show="!employee.supervisor && isEmployeeSelectedForAssignment(employee.id)">
                                 <span style='color: red'>Cancel</span>
@@ -150,6 +194,31 @@
                     </tr>
                 </table>
             </div>
+        </section>
+    </section>
+    <section class="content-wrapper main-content clear-fix">
+
+        <section class="featured">
+
+            <div class="content-wrapper">
+                <form id="newEmployee">
+                    <input id="firstName" type="text" placeholder="New Employee First Name" name="firstName" ng-model="newEmployee.firstName" required>
+                    <br/>
+                    <input id="lastName" type="text" placeholder="New Employee Last Name" name="firstName" ng-model="newEmployee.lastName" required>
+                    <br/>
+                    <label>
+                        <input
+                                id="canSupervise"
+                                type="checkbox"
+                                placeholder="Can Supervise?"
+                                name="firstName"
+                                ng-model="canSupervise" >
+                        Can Supervise?
+                    </label>
+                </form>
+            </div>
+            <span style='color: red'>{{newUserSubmitError}}</span>
+            <p class="float-right" ng-click="createEmployee()" type="submit"><button>Create New Employee</button></p>
         </section>
     </section>
 </div>
