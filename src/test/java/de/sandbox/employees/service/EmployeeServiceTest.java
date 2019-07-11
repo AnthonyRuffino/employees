@@ -1,8 +1,17 @@
 package de.sandbox.employees.service;
+import de.sandbox.employees.EmployeesApplication;
 import de.sandbox.employees.model.Employee;
 import de.sandbox.employees.repository.EmployeeRepository;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import javax.transaction.Transactional;
+
 import static org.junit.Assert.assertEquals;
 
 import java.util.Optional;
@@ -10,30 +19,25 @@ import java.util.Optional;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@Transactional
+@ActiveProfiles("test")
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = EmployeesApplication.class, webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 public class EmployeeServiceTest {
 
     private EmployeeService employeeService;
+
+    @Autowired
     private EmployeeRepository employeeRepository;
-
-    private static Employee MOCK_EMPLOYEE = new Employee();
-    static {
-        MOCK_EMPLOYEE.setId(1L);
-        MOCK_EMPLOYEE.setFirstName("Mocky");
-        MOCK_EMPLOYEE.setLastName("Mock");
-    }
-
-
 
     @Before
     public final void setup() {
-        employeeRepository = mock(EmployeeRepository.class);
-        when(employeeRepository.findOneById(1L)).thenReturn(Optional.of(MOCK_EMPLOYEE));
         employeeService = new EmployeeService(employeeRepository);
     }
 
     @Test
     public void findEmployeeByIdTest() {
         Long id = 1L;
-        assertEquals(id, employeeService.findEmployeeById(id).getId());
+        assertEquals("Max", employeeService.findEmployeeById(id).getFirstName());
     }
 }
