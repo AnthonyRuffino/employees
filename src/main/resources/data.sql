@@ -8,3 +8,8 @@ insert into EMPLOYEE (ID, creation_date, first_name, last_name, position_id) val
 insert into EMPLOYEE (ID, creation_date, first_name, last_name, position_id) values(3, CURRENT_TIMESTAMP() , 'Sarah', 'Coding', 2);
 insert into EMPLOYEE (ID, creation_date, first_name, last_name, position_id) values(4, CURRENT_TIMESTAMP() , 'Lone', 'Wolf', 2);
 insert into EMPLOYEE (ID, creation_date, first_name, last_name, position_id) values(5, CURRENT_TIMESTAMP() , 'Joe', 'Business', 3);
+
+
+insert into SUPERVISOR_RELATIONSHIP (employee_id, supervisor_id) values(1, 5);
+insert into SUPERVISOR_RELATIONSHIP (employee_id, supervisor_id) values(2, 1);
+insert into SUPERVISOR_RELATIONSHIP (employee_id, supervisor_id) values(3, 1);
