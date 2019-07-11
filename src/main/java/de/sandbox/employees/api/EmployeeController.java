@@ -44,6 +44,7 @@ public class EmployeeController {
 
     @PatchMapping("/{id}")
     public Employee patchEmployee(@PathVariable long id, @RequestBody Employee employee) {
-        throw new NotYetImplementedException();
+        employee.setId(id);
+        return employeeService.patchEmployee(employee);
     }
 }

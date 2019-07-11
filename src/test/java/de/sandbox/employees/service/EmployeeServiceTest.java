@@ -1,5 +1,6 @@
 package de.sandbox.employees.service;
 import de.sandbox.employees.EmployeesApplication;
+import de.sandbox.employees.exception.EmployeesException;
 import de.sandbox.employees.model.Employee;
 import de.sandbox.employees.repository.EmployeeRepository;
 import org.junit.Before;
@@ -39,5 +40,18 @@ public class EmployeeServiceTest {
     public void findEmployeeByIdTest() {
         Long id = 1L;
         assertEquals("Max", employeeService.findEmployeeById(id).getFirstName());
+    }
+
+    @Test(expected = EmployeesException.class)
+    public void patchEmployeeTest() {
+        Employee maxMustermannSupervisingHimself = new Employee();
+        maxMustermannSupervisingHimself.setId(1L);
+
+        Employee maxMustermann = new Employee();
+        maxMustermann.setId(1L);
+
+        maxMustermann.setSupervisor(maxMustermannSupervisingHimself);
+
+        employeeService.patchEmployee(maxMustermann);
     }
 }
