@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" ng-app ng-controller="EmployeeController">
 
 <head>
     <title></title>
@@ -16,6 +16,25 @@
             cursor: pointer;
         }
     </style>
+    <script>
+
+      const API = "/api/employee/";
+      function EmployeeController($scope) {
+        $scope.employees = [];
+
+        $scope.loadEmployees = () => {
+          fetch(API)
+            .then(function(response) {
+              return response.json();
+            })
+            .then(function(data) {
+              $scope.employees = data;
+              $scope.$apply();
+            });
+        };
+        $scope.loadEmployees();
+      }
+    </script>
 </head>
 
 <body>
@@ -40,7 +59,6 @@
             <div class="content-wrapper">
                 <table>
                     <tr>
-                        <th></th>
                         <th>ID</th>
                         <th>First Name</th>
                         <th>Last Name</th>
@@ -48,6 +66,23 @@
                         <th>Supervisor</th>
                         <th>Assign Supervisor</th>
                         <th>Delete</th>
+                    </tr>
+                    <tr ng-repeat="employee in employees">
+                        <td>{{employee.id}}</td>
+                        <td>{{employee.firstName}}</td>
+                        <td>{{employee.lastName}}</td>
+                        <td>{{employee.position.name}}</td>
+                        <td>
+                            {{employee.supervisor && (employee.firstName + ' ' + employee.lastName + ' [ ID: ' + employee.id + ' ]')}}
+                        </td>
+                        <td>
+                            <button>
+                                <span style='color: green'>Assign Supervisor</span>
+                            </button>
+                        </td>
+                        <td>
+                            <button >Delete User</button>
+                        </td>
                     </tr>
                 </table>
             </div>
