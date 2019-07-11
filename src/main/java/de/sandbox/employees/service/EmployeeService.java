@@ -73,6 +73,9 @@ public class EmployeeService {
         if(supervisor.getId().equals(employee.getId())) {
             throw new EmployeesException("Employees may not supervise themselves!");
         }
+        if(supervisor.getSupervisor() != null && supervisor.getSupervisor().getId().equals(employee.getId())) {
+            throw new EmployeesException("Employees may not supervise their supervisors!");
+        }
         return supervisor;
     }
 }

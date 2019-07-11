@@ -43,7 +43,7 @@ public class EmployeeServiceTest {
     }
 
     @Test(expected = EmployeesException.class)
-    public void patchEmployeeTest() {
+    public void employeesCanBeTheirOwnBossTest() {
         Employee maxMustermannSupervisingHimself = new Employee();
         maxMustermannSupervisingHimself.setId(1L);
 
@@ -53,5 +53,19 @@ public class EmployeeServiceTest {
         maxMustermann.setSupervisor(maxMustermannSupervisingHimself);
 
         employeeService.patchEmployee(maxMustermann);
+    }
+
+    @Test(expected = EmployeesException.class)
+    public void employeesCanSuperviseTheirSupervisorsTest() {
+
+        Employee joeBusiness = new Employee();
+        joeBusiness.setId(5L);
+
+        Employee maxMustermann = new Employee();
+        maxMustermann.setId(1L);
+
+        joeBusiness.setSupervisor(maxMustermann);
+
+        employeeService.patchEmployee(joeBusiness);
     }
 }
