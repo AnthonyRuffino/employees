@@ -7,6 +7,12 @@ You can configure the application properties to another database if you prefer.
 ## Tech Stack
 This application uses Spring Boot and AngularJS
 
+## Clone the repo
+
+```bash
+git clone https://github.com/AnthonyRuffino/employees.git
+```
+
 
 ## Run with Docker
 
