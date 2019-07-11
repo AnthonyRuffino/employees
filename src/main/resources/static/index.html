@@ -50,6 +50,12 @@
           }).then(() => $scope.loadEmployees());
         }
 
+        $scope.employeeIsSubordinateToSelectedEmployee = (employee) => {
+          return employee.supervisor
+            && $scope.employeeSelectedForAssignment
+            && employee.supervisor.id === $scope.employeeSelectedForAssignment.id;
+        }
+
         $scope.showAssignAsSupervisorButton = (employee) => {
           return employee.position.supervisor
             && $scope.employeeSelectedForAssignment
@@ -70,7 +76,6 @@
         $scope.loadEmployees = () => {
           fetch(API)
             .then(function(response) {
-              console.log(response);
               return response.json();
             })
             .then(function(data) {
@@ -116,9 +121,13 @@
                     </tr>
                     <tr ng-repeat="employee in employees">
                         <td>
-                            <button ng-click="assignAsSupervisor(employee.id)" ng-show="showAssignAsSupervisorButton(employee)">
-                                <span style='color: green'>Assign as supervisor for {{formatEmployee(employeeSelectedForAssignment)}}</span>
-                            </button>
+                            <div ng-show="showAssignAsSupervisorButton(employee)">
+                                <button ng-hide="employeeIsSubordinateToSelectedEmployee(employee)" ng-click="assignAsSupervisor(employee.id)" >
+                                    <span style='color: green'>Assign as supervisor for {{formatEmployee(employeeSelectedForAssignment)}}</span>
+                                </button>
+                                <span ng-show="employeeIsSubordinateToSelectedEmployee(employee)" style='color: red'>Selected user is this user's supervisor</span>
+                            </div>
+
                         </td>
                         <td>{{employee.id}}</td>
                         <td>{{employee.firstName}}</td>
