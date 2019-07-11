@@ -11,6 +11,7 @@ This application uses Spring Boot and AngularJS
 
 ```bash
 git clone https://github.com/AnthonyRuffino/employees.git
+cd employees
 ```
 
 
