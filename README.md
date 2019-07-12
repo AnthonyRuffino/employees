@@ -24,7 +24,7 @@ docker build -t anthonyruffino/employees .
 sudo docker run --rm -it -p 9090:9090 anthonyruffino/employees
 ```
 
-Check application at http://localhost:8081/
+Check application at http://localhost:9090/
 
 
 ## Run with Maven Wrapper
